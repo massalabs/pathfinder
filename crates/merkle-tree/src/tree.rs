@@ -60,7 +60,7 @@ use std::{cell::RefCell, rc::Rc};
 #[derive(Debug, Clone)]
 pub struct MerkleTree<H: FeltHash, const HEIGHT: usize> {
     root: Option<Rc<RefCell<InternalNode>>>,
-    leaves: HashMap<BitVec<u8, Msb0>, Felt>,
+    pub leaves: HashMap<BitVec<u8, Msb0>, Felt>,
     _hasher: std::marker::PhantomData<H>,
     /// If enables, node hashes are verified as they are resolved. This allows
     /// testing for database corruption.
