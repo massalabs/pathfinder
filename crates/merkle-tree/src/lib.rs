@@ -7,7 +7,6 @@ mod contract;
 mod storage;
 mod transaction;
 
-pub use storage::Storage;
 pub use class::ClassCommitmentTree;
 pub use contract::{ContractsStorageTree, StorageCommitmentTree};
 pub use transaction::TransactionOrEventTree;

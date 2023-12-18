@@ -797,6 +797,28 @@ pub enum Visit {
     StopSubtree,
 }
 
+#[derive(Default, Debug)]
+struct TestStorage {
+    nodes: HashMap<u64, (Felt, StoredNode)>,
+    leaves: HashMap<Felt, Felt>,
+}
+
+impl Storage for TestStorage {
+    fn get(&self, node: u64) -> anyhow::Result<Option<StoredNode>> {
+        Ok(self.nodes.get(&node).map(|x| x.1.clone()))
+    }
+
+    fn hash(&self, node: u64) -> anyhow::Result<Option<Felt>> {
+        Ok(self.nodes.get(&node).map(|x| x.0))
+    }
+
+    fn leaf(&self, path: &BitSlice<u8, Msb0>) -> anyhow::Result<Option<Felt>> {
+        let key = Felt::from_bits(path).context("Mapping path to felt")?;
+
+        Ok(self.leaves.get(&key).cloned())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use pathfinder_common::hash::PedersenHash;
@@ -807,28 +829,6 @@ mod tests {
     use pathfinder_common::felt;
 
     type TestTree = MerkleTree<PedersenHash, 251>;
-
-    #[derive(Default, Debug)]
-    struct TestStorage {
-        nodes: HashMap<u64, (Felt, StoredNode)>,
-        leaves: HashMap<Felt, Felt>,
-    }
-
-    impl Storage for TestStorage {
-        fn get(&self, node: u64) -> anyhow::Result<Option<StoredNode>> {
-            Ok(self.nodes.get(&node).map(|x| x.1.clone()))
-        }
-
-        fn hash(&self, node: u64) -> anyhow::Result<Option<Felt>> {
-            Ok(self.nodes.get(&node).map(|x| x.0))
-        }
-
-        fn leaf(&self, path: &BitSlice<u8, Msb0>) -> anyhow::Result<Option<Felt>> {
-            let key = Felt::from_bits(path).context("Mapping path to felt")?;
-
-            Ok(self.leaves.get(&key).cloned())
-        }
-    }
 
     /// Commits the tree changes and persists them to storage.
     fn commit_and_persist<H: FeltHash, const HEIGHT: usize>(
