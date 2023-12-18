@@ -799,8 +799,8 @@ pub enum Visit {
 
 #[derive(Default, Debug)]
 pub struct TestStorage {
-    nodes: HashMap<u64, (Felt, StoredNode)>,
-    leaves: HashMap<Felt, Felt>,
+    pub nodes: HashMap<u64, (Felt, StoredNode)>,
+    pub leaves: HashMap<Felt, Felt>,
 }
 
 impl Storage for TestStorage {
